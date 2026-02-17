@@ -442,10 +442,11 @@
   const toastEl  = document.getElementById('toast');
 
   /* ── Username ── */
-  let username = localStorage.getItem('pokichat_name') || '';
+  let username = '';
+  try { username = localStorage.getItem('pokichat_name') || ''; } catch(e) {}
   if (!username) {
     username = prompt('What should we call you in the chat?', 'Guest') || 'Guest';
-    localStorage.setItem('pokichat_name', username);
+    try { localStorage.setItem('pokichat_name', username); } catch(e) {}
   }
   const initials = username.slice(0, 2).toUpperCase();
   document.getElementById('my-av').textContent   = initials;
@@ -543,6 +544,7 @@
     inputEl.style.height = 'auto';
     sendBtn.disabled = true;
 
+    // Optimistic render
     addMsg(text, username, false);
     knownCount++;
 
@@ -550,7 +552,7 @@
       const r = await fetch(API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: text })
+        body: JSON.stringify({ user: username, content: text })
       });
       if (!r.ok) throw new Error();
     } catch {
@@ -570,7 +572,12 @@
       const msgs = await r.json();
       if (msgs.length > knownCount) {
         for (let i = knownCount; i < msgs.length; i++) {
-          addMsg(msgs[i].content, 'Server', true);
+          const m = msgs[i];
+          const author = (m.user && m.user.trim()) ? m.user : 'Unknown';
+          // Skip our own messages — already rendered optimistically
+          if (author !== username) {
+            addMsg(m.content, author, false);
+          }
         }
         knownCount = msgs.length;
       }

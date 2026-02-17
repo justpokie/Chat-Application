@@ -3,6 +3,7 @@ package com.pokie.pokichat.model;
 
 public class Message {
 
+    String user;
     String content;
 
     public Message() {
@@ -11,6 +12,14 @@ public class Message {
 
     public Message(String content) {
         this.content = content;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public String setUser(String user) {
+        return this.user = user;
     }
 
     public String getContent() {
