@@ -18,8 +18,8 @@ public class Message {
         return user;
     }
 
-    public String setUser(String user) {
-        return this.user = user;
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getContent() {
