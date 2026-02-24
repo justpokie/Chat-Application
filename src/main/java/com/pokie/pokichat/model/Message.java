@@ -1,32 +1,43 @@
 package com.pokie.pokichat.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
+
+@Setter
+@Getter
+@Entity
+@Table(name = "message")
 public class Message {
 
-    String user;
-    String content;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer message_id;
+
+    @Column(name = "username")
+    private String user;
+
+    @NotBlank
+    private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "channel_id")
+    private Channel channel;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime dateCreated;
 
     public Message() {
 
     }
 
     public Message(String content) {
-        this.content = content;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
         this.content = content;
     }
 
